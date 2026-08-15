@@ -1,0 +1,24 @@
+Tracker(Tracking) {
+    * (Tracking):
+    | Closest(A, E) & Cell(E, V) ? Move(E) :(Tracking)
+    | Closest(A, W) & Cell(W, V) ? Move(W) :(Tracking)
+    | Closest(A, N) & Cell(N, V) ? Move(N) :(Tracking)
+    | Closest(A, S) & Cell(S, V) ? Move(S) :(Tracking)
+
+    | Closest(A, E) & Cell(N, V) ? Move(N) :(Tracking)
+    | Closest(A, E) & Cell(S, V) ? Move(S) :(Tracking)
+
+    | Closest(A, W) & Cell(N, V) ? Move(N) :(Tracking)
+    | Closest(A, W) & Cell(S, V) ? Move(S) :(Tracking)
+
+    | Closest(A, N) & Cell(E, V) ? Move(E) :(Tracking)
+    | Closest(A, N) & Cell(W, V) ? Move(W) :(Tracking)
+
+    | Closest(A, S) & Cell(E, V) ? Move(E) :(Tracking)
+    | Closest(A, S) & Cell(W, V) ? Move(W) :(Tracking)
+
+    | Cell(F, V) ? Move(F) :(Tracking)
+    | Cell(L, V) ? Turn(L) :(Tracking)
+    | Cell(R, V) ? Turn(R) :(Tracking)
+    | Cell(B, V) ? Turn(B) :(Tracking)
+}

@@ -1,0 +1,236 @@
+
+Maitre5(Tactique){
+
+* (Tactique):
+  | MyDir(N) & Closest(E,N) ? Hit :(Tactique)
+  | MyDir(W) & Closest(E,W) ? Hit :(Tactique)
+  | MyDir(E) & Closest(E,E) ? Hit :(Tactique)
+  | MyDir(S) & Closest(E,S) ? Hit :(Tactique)
+  | Cell(F,V) ? Move :(Colorier)
+  | Cell(F,J) ? Move :(Colorier)
+  | Cell(F,P) ? Move :(Utilisateur)
+  | True ? Turn(R) :(Colorier)
+
+* (Utilisateur):
+  | True ? Throw :(Tactique)
+
+* (Colorier) : True ? Pop :(Recharger)
+
+* (Recharger): True ? Wizz :(Tactique)
+
+}
+
+CopieurBleu5(Init){
+
+* (Init):
+  | Cell(W,V) & Key(f) & MyDir(W) ? Move :(Init)
+  | Cell(W,J) & Key(f) & MyDir(W) ? Move :(Init)
+  | Cell(W,P) & Key(f) & MyDir(W) ? Move :(Init)
+  | Key(f) & ! MyDir(W) ? Turn(W) :(Init)
+  | Cell(N,V) & Key(t) & MyDir(N) ? Move :(Init)
+  | Cell(N,J) & Key(t) & MyDir(N) ? Move :(Init)
+  | Cell(N,P) & Key(t) & MyDir(N) ? Move :(Init)
+  | Key(t) & ! MyDir(N) ? Turn(N) :(Init)
+  | Cell(S,V) & Key(g) & MyDir(S) ? Move :(Init)
+  | Cell(S,J) & Key(g) & MyDir(S) ? Move :(Init)
+  | Cell(S,P) & Key(g) & MyDir(S) ? Move :(Init)
+  | Key(g) & ! MyDir(S) ? Turn(S) :(Init)
+  | Cell(E,V) & Key(h) & MyDir(E) ? Move :(Init)
+  | Cell(E,J) & Key(h) & MyDir(E) ? Move :(Init)
+  | Cell(E,P) & Key(h) & MyDir(E) ? Move :(Init)
+  | Key(h) & ! MyDir(E) ? Turn(E) :(Init)
+  | Key(r) ? Hit :(Init)
+  | Key(y) ? Throw :(Init)
+  | Key(w) ? Pop :(Init)
+  | Key(x) ? Wizz :(Init)
+  | True ? Rest :(Init)
+
+}
+
+CopieurRouge5(Init){
+
+* (Init):
+  | Cell(N,V) & Key(FU) & MyDir(N) ? Move :(Init)
+  | Cell(N,J) & Key(FU) & MyDir(N) ? Move :(Init)
+  | Cell(N,P) & Key(FU) & MyDir(N) ? Move :(Init)
+  | Key(FU) & ! MyDir(N) ? Turn(N) :(Init)
+  | Cell(S,V) & Key(FD) & MyDir(S) ? Move :(Init)
+  | Cell(S,J) & Key(FD) & MyDir(S) ? Move :(Init)
+  | Cell(S,P) & Key(FD) & MyDir(S) ? Move :(Init)
+  | Key(FD) & ! MyDir(S) ? Turn(S) :(Init)
+  | Cell(E,V) & Key(FR) & MyDir(E) ? Move :(Init)
+  | Cell(E,J) & Key(FR) & MyDir(E) ? Move :(Init)
+  | Cell(E,P) & Key(FR) & MyDir(E) ? Move :(Init)
+  | Key(FR) & ! MyDir(E) ? Turn(E) :(Init)
+  | Cell(W,V) & Key(FL) & MyDir(W) ? Move :(Init)
+  | Cell(W,J) & Key(FL) & MyDir(W) ? Move :(Init)
+  | Cell(W,P) & Key(FL) & MyDir(W) ? Move :(Init)
+  | Key(FL) & ! MyDir(W) ? Turn(W) :(Init)
+  | Key(o) ? Hit :(Init)
+  | Key(p) ? Throw :(Init)
+  | Key(l) ? Pop :(Init)
+  | Key(m) ? Wizz :(Init)
+  | True ? Rest :(Init)
+
+}
+
+
+TireurFou5(Avancer){
+
+* (Avancer):
+  | Cell(F,V) ? Move :(Tireur)
+  | Cell(F,V) ? Turn(L) :(Tireur)
+  | Cell(F,J) ? Move :(Tireur)
+  | Cell(F,P) ? Move :(Utilisateur)
+  | True ? Turn(L) :(Tireur)
+
+* (Tireur):
+  | MyDir(N) & Closest(E,N) ? Hit :(Tireur)
+  | MyDir(W) & Closest(E,W) ? Hit :(Tireur)
+  | MyDir(E) & Closest(E,E) ? Hit :(Tireur)
+  | MyDir(S) & Closest(E,S) ? Hit :(Tireur)
+  | True ? Hit :(Avancer)
+
+* (Utilisateur): True ? Throw :(Tireur)
+
+}
+
+MaitreInstable5(Tactique){
+
+* (Tactique):
+  | MyDir(N) & Closest(E,N) ? Hit :(Tactique)
+  | MyDir(W) & Closest(E,W) ? Hit :(Tactique)
+  | MyDir(E) & Closest(E,E) ? Hit :(Tactique)
+  | MyDir(S) & Closest(E,S) ? Hit :(Tactique)
+  | Cell(F,V) ? Move :(Colorier)
+  | Cell(F,V) ? Move :(Tactique)
+  | Cell(L,V) ? Turn(R) :(Tactique)
+  | Cell(F,J) ? Move :(Colorier)
+  | Cell(F,P) ? Move :(Utilisateur)
+  | True ? Turn(R) :(Colorier)
+
+* (Utilisateur):
+  | True ? Throw :(Tactique)
+
+* (Colorier) : True ? Pop :(Recharger)
+
+* (Recharger): True ? Wizz :(Tactique)
+
+}
+
+Garde5(Avancer){
+
+* (Avancer):
+  | MyDir(N) & Closest(E,N) ? Hit :(Tireur)
+  | MyDir(W) & Closest(E,W) ? Hit :(Tireur)
+  | MyDir(E) & Closest(E,E) ? Hit :(Tireur)
+  | MyDir(S) & Closest(E,S) ? Hit :(Tireur)
+  | Cell(F,V) ? Move :(Avancer)
+  | Cell(F,V) ? Move :(Avancer)
+  | Cell(F,J) ? Move :(Avancer)
+  | Cell(F,V) ? Turn(R):(Avancer)
+  | Cell(F,V) ? Turn(L):(Avancer)
+  | True ? Turn(R) :(Avancer)
+
+* (Tireur):
+  | MyDir(N) & Closest(E,N) ? Hit :(Tireur)
+  | MyDir(W) & Closest(E,W) ? Hit :(Tireur)
+  | MyDir(E) & Closest(E,E) ? Hit :(Tireur)
+  | MyDir(S) & Closest(E,S) ? Hit :(Tireur)
+  | True ? Turn(L) :(Avancer)
+
+}
+
+Destroyer(Search){
+  *(Search) :
+  | Closest(A, N) ? Turn(N) : (Move_F)
+  | Closest(A, S) ? Turn(S) : (Move_F)
+  | Closest(A, E) ? Turn(E) : (Move_F)
+  | Closest(A, W) ? Turn(W) : (Move_F)
+  | True ? Move(F) : (Search)
+  *(Move_F) :
+  | True ? Move(F) : (Hit_F)
+  *(Hit_F) :
+  | True ? Hit(F) : (Search)
+}
+
+Projectile(Init){
+
+  * (Init) : True ? Move(F) :(Init)
+
+}
+
+Oil(Init){
+  *(Init) : True ? Move(F) :(Init)
+}
+
+Follower6(Chase){
+	* (Chase):
+	  | Cell(N,T) ? Hit(N) :(Chase)
+	  | Cell(S,T) ? Hit(S) :(Chase)
+	  | Cell(E,T) ? Hit(E) :(Chase)
+	  | Cell(W,T) ? Hit(W) :(Chase)
+	  | Closest(N,T) & Cell(N,V) ? Move(N) / Pop(N) :(Chase)
+	  | Closest(N,T) & Cell(E,V) ? Move(E) / Pop(E) :(Chase)
+	  | Closest(N,T) & Cell(W,V) ? Move(W) / Pop(W) :(Chase)
+	  | Closest(N,T) & Cell(S,V) ? Move(S) / Pop(S) :(Chase)
+	  | Closest(S,T) & Cell(S,V) ? Move(S) / Pop(S) :(Chase)
+	  | Closest(S,T) & Cell(W,V) ? Move(W) / Pop(W) :(Chase)
+	  | Closest(S,T) & Cell(E,V) ? Move(E) / Pop(E) :(Chase)
+	  | Closest(S,T) & Cell(N,V) ? Move(N) / Pop(N) :(Chase)
+	  | Closest(E,T) & Cell(E,V) ? Move(E) / Pop(E) :(Chase)
+	  | Closest(E,T) & Cell(N,V) ? Move(N) / Pop(N) :(Chase)
+	  | Closest(E,T) & Cell(S,V) ? Move(S) / Pop(S) :(Chase)
+	  | Closest(E,T) & Cell(W,V) ? Move(W) / Pop(W) :(Chase)
+	  | Closest(W,T) & Cell(W,V) ? Move(W) / Pop(W) :(Chase)
+	  | Closest(W,T) & Cell(S,V) ? Move(S) / Pop(S) :(Chase)
+	  | Closest(W,T) & Cell(N,V) ? Move(N) / Pop(N) :(Chase)
+	  | Closest(W,T) & Cell(E,V) ? Move(E) / Pop(E) :(Chase)
+	  | True ? Wizz :(Chase)
+}
+
+FollowerRelative6(Chase){
+	* (Chase):
+	  | Cell(F,T) ? Hit(F) :(Chase)
+	  | Cell(B,T) ? Hit(B) :(Chase)
+	  | Cell(R,T) ? Hit(R) :(Chase)
+	  | Cell(L,T) ? Hit(L) :(Chase)
+	  | Closest(F,T) & Cell(F,V) ? Move(F) / Pop(F) :(Chase)
+	  | Closest(F,T) & Cell(R,V) ? Move(R) / Pop(R) :(Chase)
+	  | Closest(F,T) & Cell(L,V) ? Move(L) / Pop(L) :(Chase)
+	  | Closest(F,T) & Cell(B,V) ? Move(B) / Pop(B) :(Chase)
+	  | Closest(B,T) & Cell(B,V) ? Move(B) / Pop(B) :(Chase)
+	  | Closest(B,T) & Cell(L,V) ? Move(L) / Pop(L) :(Chase)
+	  | Closest(B,T) & Cell(R,V) ? Move(R) / Pop(R) :(Chase)
+	  | Closest(B,T) & Cell(F,V) ? Move(F) / Pop(F) :(Chase)
+	  | Closest(R,T) & Cell(R,V) ? Move(R) / Pop(R) :(Chase)
+	  | Closest(R,T) & Cell(F,V) ? Move(F) / Pop(F) :(Chase)
+	  | Closest(R,T) & Cell(B,V) ? Move(B) / Pop(B) :(Chase)
+	  | Closest(R,T) & Cell(L,V) ? Move(L) / Pop(L) :(Chase)
+	  | Closest(L,T) & Cell(L,V) ? Move(L) / Pop(L) :(Chase)
+	  | Closest(L,T) & Cell(B,V) ? Move(B) / Pop(B) :(Chase)
+	  | Closest(L,T) & Cell(F,V) ? Move(F) / Pop(F) :(Chase)
+	  | Closest(L,T) & Cell(R,V) ? Move(R) / Pop(R) :(Chase)
+	  | True ? Wizz :(Chase)
+}
+
+
+PiecePassive6(Passive){
+	* (Passive):
+	  | True ? 25% Move / 25% Turn / 25% Pop / 25% Wizz :(Passive)
+}
+
+PieceTurner6(Turner){
+	* (Turner):
+	  | True ? Turn / Move / Pop / Wizz :(Turner)
+}
+
+PiecePopper6(Popper){
+	* (Popper):
+	| True ? Pop / Move / Turn / Wizz :(Popper)
+}
+
+PieceWizzer6(Wizzer){
+	* (Wizzer):
+	  | True ? Wizz / Move / Turn / Pop :(Wizzer)
+}

@@ -1,0 +1,5 @@
+AppleFall(Resting){
+  * (Resting):
+  | Struck ? Move(S) :(Resting)	// ici la condition Struck est utilisee mais correspond a CanFall dans le GalCompiler
+  | True ?           :(Resting)
+}

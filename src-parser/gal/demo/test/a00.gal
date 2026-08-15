@@ -1,0 +1,56 @@
+SuperHero(Explore){
+
+* (Explore):
+  | Cell(F,c) ? Pick(c)    :(Happy)
+  | Cell(d,V) ? Move(d) :(Run)
+  | Cell(_,J) ? Jump()    :(Explore)
+  | True ? Turn(L)      :(Explore)
+
+* (Run):
+  | Cell(F,V) ? Move(F) ; Move(F) :(Explore)
+  | Cell(F,A) / Cell(B,A) / Cell(L,A) / Cell(R,A) ? Wizz / Pop :(Escape)
+  | True ? 10% Pop / 10% Wizz / Rest :(Explore)
+
+* (Escape):
+  | Cell(F,A) & Cell(B,V) ? Move(B) :(Escape)
+  | Cell(B,A) & Cell(F,V) ? Move(F) :(Escape)
+  | Cell(R,A) & Cell(L,V) ? Move(L) :(Escape)
+  | Cell(L,A) & Cell(R,V) ? Move(R) :(Escape)
+  | Cell(F,e) & !(Cell(B,V)) ? Hit(e)  :(Fight)
+  | True ? Rest :(Explore)
+
+* (Fight):
+  | Cell(F,A) & Cell(L,A) & !(Cell(R,V) / Cell(B,V)) ? Hit     :(Angry)
+  | Cell(F,A) & Cell(R,A) & !(Cell(L,V) / Cell(B,V)) ? Hit     :(Angry)
+  | Cell(F,A) & Cell(B,A) & !(Cell(L,V) / Cell(R,V)) ? Hit     :(Angry)
+  | Cell(L,A) & Cell(R,A) & !(Cell(F,V) / Cell(B,V)) ? Turn(R) :(Angry)
+  | True ? Pop :(Escape)
+
+* (Angry):
+  | Got(Power) ? Hit      :(Angry)
+  | !Got(Power) ? Protect :(Angry)
+
+* (Power):
+  | Cell(F,V) & Cell(B,V) & Cell(L,V) & Cell(R,V) ? Rest : (Power)
+  | True ? Rest :(Run)
+
+* (Happy):
+| Cell(F,P) ? Pick    :(Happy)
+| Cell(B,P) ? Turn(B) :(Happy)
+| Cell(L,P) ? Turn(L) :(Happy)
+| Cell(R,P) ? Turn(R) :(Happy)
+| True ? Turn(L)      :(Explore)
+
+* (Crazy)  : True ? Get     :(Crazy)
+
+* (Think):
+  | Cell(F,J) ? Jump    :(Build)
+  | Cell(B,J) ? Turn(B) :(Think)
+  | Cell(L,J) ? Turn(L) :(Think)
+  | Cell(R,J) ? Turn(R) :(Think)
+
+* (Build):
+  | Got(Stuff) ? Get :(Build)
+  | True ? Wizz    :(Explore)
+
+}

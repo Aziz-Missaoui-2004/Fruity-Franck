@@ -1,0 +1,10 @@
+// pour une errance intelligente
+EnemyRandom(Roam){
+  * (Roam):
+  | Closest(A, 5) ? Move($.d)   :(Roam)
+  | Step(F,V)     ? Move(F)     :(Roam)
+  | Step(L,V)     ? Turn(L)     :(Roam)
+  | Step(R,V)     ? Turn(R)     :(Roam)
+  | Step(B,V)     ? Turn(B)     :(Roam)
+  | True          ? Turn(R)     :(Roam)
+} 

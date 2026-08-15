@@ -1,0 +1,21 @@
+TALION (Talion){
+
+// single line comment are allowed
+
+ * (Talion):
+ | Struck(B)        ? Hit(180°, 80%, 1)  :(Talion)
+ | Struck & Pushed  ? Hit ; Push         :(Talion)
+ | Pushed(N) & ! Step(N,V) ? Push(N)     :(Talion)
+ | Step(90°,1,A) ? Move(1,-90°,100%)     :(Talion)
+
+// GAL with variables : _, $i and d	
+
+ | Struck & Pushed  ? Hit($1) ; Push($2) :(Talion)
+ 
+ | Step(A,d) ? Hit(d)  :(Talion)
+ | Step(A,_) ? Hit($)  :(Talion)
+ | Step(A,_) ? Move(opposite($))   :(Talion) 
+ | Pushed(d) & ! Step(d,V) ? Push(opposite(d)) :(Talion)
+ 
+}
+

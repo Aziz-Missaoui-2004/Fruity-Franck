@@ -1,0 +1,65 @@
+Square(PatrolLeft) {
+    * (PatrolLeft):
+    | Closest(A, 4) & Closest(A, W) & Cell(W, V) ? Move(W) :(Attack)
+    | Closest(A, 4) & Closest(A, E) & Cell(E, V) ? Move(E) :(Attack)
+    | Closest(A, 4) & Closest(A, N) & Cell(N, V) ? Move(N) :(Attack)
+    | Closest(A, 4) & Closest(A, S) & Cell(S, V) ? Move(S) :(Attack)
+
+    | Cell(W, V) ? Move(W) :(PatrolLeft)
+    | Cell(N, V) ? Move(N) :(PatrolUp)
+    | Cell(E, V) ? Move(E) :(PatrolRight)
+    | Cell(S, V) ? Move(S) :(PatrolDown)
+    | True       ? Wait(10) :(PatrolLeft)
+
+
+    * (PatrolUp):
+    | Closest(A, 4) & Closest(A, W) & Cell(W, V) ? Move(W) :(Attack)
+    | Closest(A, 4) & Closest(A, E) & Cell(E, V) ? Move(E) :(Attack)
+    | Closest(A, 4) & Closest(A, N) & Cell(N, V) ? Move(N) :(Attack)
+    | Closest(A, 4) & Closest(A, S) & Cell(S, V) ? Move(S) :(Attack)
+
+    | Cell(N, V) ? Move(N) :(PatrolUp)
+    | Cell(E, V) ? Move(E) :(PatrolRight)
+    | Cell(S, V) ? Move(S) :(PatrolDown)
+    | Cell(W, V) ? Move(W) :(PatrolLeft)
+    | True       ? Wait(10) :(PatrolUp)
+
+
+    * (PatrolRight):
+    | Closest(A, 4) & Closest(A, W) & Cell(W, V) ? Move(W) :(Attack)
+    | Closest(A, 4) & Closest(A, E) & Cell(E, V) ? Move(E) :(Attack)
+    | Closest(A, 4) & Closest(A, N) & Cell(N, V) ? Move(N) :(Attack)
+    | Closest(A, 4) & Closest(A, S) & Cell(S, V) ? Move(S) :(Attack)
+
+    | Cell(E, V) ? Move(E) :(PatrolRight)
+    | Cell(S, V) ? Move(S) :(PatrolDown)
+    | Cell(W, V) ? Move(W) :(PatrolLeft)
+    | Cell(N, V) ? Move(N) :(PatrolUp)
+    | True       ? Wait(10) :(PatrolRight)
+
+
+    * (PatrolDown):
+    | Closest(A, 4) & Closest(A, W) & Cell(W, V) ? Move(W) :(Attack)
+    | Closest(A, 4) & Closest(A, E) & Cell(E, V) ? Move(E) :(Attack)
+    | Closest(A, 4) & Closest(A, N) & Cell(N, V) ? Move(N) :(Attack)
+    | Closest(A, 4) & Closest(A, S) & Cell(S, V) ? Move(S) :(Attack)
+
+    | Cell(S, V) ? Move(S) :(PatrolDown)
+    | Cell(W, V) ? Move(W) :(PatrolLeft)
+    | Cell(N, V) ? Move(N) :(PatrolUp)
+    | Cell(E, V) ? Move(E) :(PatrolRight)
+    | True       ? Wait(10) :(PatrolDown)
+
+
+    * (Attack):
+    | Closest(A, 5) & Closest(A, W) & Cell(W, V) ? Move(W) :(Attack)
+    | Closest(A, 5) & Closest(A, E) & Cell(E, V) ? Move(E) :(Attack)
+    | Closest(A, 5) & Closest(A, N) & Cell(N, V) ? Move(N) :(Attack)
+    | Closest(A, 5) & Closest(A, S) & Cell(S, V) ? Move(S) :(Attack)
+
+    | Cell(W, V) ? Move(W) :(PatrolLeft)
+    | Cell(N, V) ? Move(N) :(PatrolUp)
+    | Cell(E, V) ? Move(E) :(PatrolRight)
+    | Cell(S, V) ? Move(S) :(PatrolDown)
+    | True       ? Wait(10) :(PatrolLeft)
+}

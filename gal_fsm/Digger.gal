@@ -1,0 +1,30 @@
+// Il suit les galeries - si il sait creuser c'est lui qui les créer
+WallFollower(GoLeft) {
+    * (GoLeft):
+    | Cell(W, V) ? Move(W)  :(GoLeft)
+    | Cell(N, V) ? Move(N)  :(GoUp)
+    | Cell(E, V) ? Move(E)  :(GoRight)
+    | Cell(S, V) ? Move(S)  :(GoDown)
+    | True       ? Wait(10) :(GoLeft)
+
+    * (GoUp):
+    | Cell(N, V) ? Move(N)  :(GoUp)
+    | Cell(E, V) ? Move(E)  :(GoRight)
+    | Cell(S, V) ? Move(S)  :(GoDown)
+    | Cell(W, V) ? Move(W)  :(GoLeft)
+    | True       ? Wait(10) :(GoUp)
+
+    * (GoRight):
+    | Cell(E, V) ? Move(E)  :(GoRight)
+    | Cell(S, V) ? Move(S)  :(GoDown)
+    | Cell(W, V) ? Move(W)  :(GoLeft)
+    | Cell(N, V) ? Move(N)  :(GoUp)
+    | True       ? Wait(10) :(GoRight)
+
+    * (GoDown):
+    | Cell(S, V) ? Move(S)  :(GoDown)
+    | Cell(W, V) ? Move(W)  :(GoLeft)
+    | Cell(N, V) ? Move(N)  :(GoUp)
+    | Cell(E, V) ? Move(E)  :(GoRight)
+    | True       ? Wait(10) :(GoDown)
+}

@@ -1,0 +1,13 @@
+Fleeing(Flee) {
+    * (Flee):
+    | Closest(A, N) & Cell(S, V) ? Move(S) :(Flee)
+    | Closest(A, S) & Cell(N, V) ? Move(N) :(Flee)
+    | Closest(A, E) & Cell(W, V) ? Move(W) :(Flee)
+    | Closest(A, W) & Cell(E, V) ? Move(E) :(Flee)
+
+    | Cell(F, V) ? Move(F) :(Flee)
+    | Cell(L, V) ? Move(L) :(Flee)
+    | Cell(R, V) ? Move(R) :(Flee)
+    | Cell(B, V) ? Move(B) :(Flee)
+    
+}

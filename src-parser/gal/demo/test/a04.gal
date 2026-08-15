@@ -1,0 +1,128 @@
+
+Artiste5(Colorier){
+
+* (Colorier) : True ? Pop :(Recharger)
+* (Recharger): True ? Wizz :(Deplacement1)
+* (Deplacement1):
+  | Cell(F,V) ? Move :(Deplacement2)
+  | Cell(F,V) ? Turn(L) :(Deplacement1)
+  | Cell(F,J) ? Move :(Deplacement2)
+  | True ? Turn(R) :(Deplacement1)
+
+* (Deplacement2):
+  | Cell(F,V) ? Move :(Deplacement3)
+  | Cell(F,J) ? Move :(Deplacement3)
+  | Cell(F,V) ? Turn(R) :(Deplacement2)
+  | True ? Turn(L) :(Deplacement2)
+
+* (Deplacement3):
+  | Cell(F,V) ? Move :(Colorier)
+  | Cell(F,J) ? Move :(Colorier)
+  | Cell(F,V) ? Turn(L) :(Deplacement3)
+  | True ? Turn(R) :(Deplacement3)
+
+}
+
+Player5(Init){
+  * (Init) :
+  | Key(FU) ? Turn(N) :(Move_N)
+  | Key(FL) ? Turn(W) :(Move_W)
+  | Key(FD) ? Turn(S) :(Move_S)
+  | Key(FR) ? Turn(E) :(Move_E)
+  | Key(p) ? Pop :(Init)
+  | Key(w) ? Wizz :(Init)
+  | Key(SPACE) ? Hit :(Init)
+  | Key(f) ? Pick :(Init)
+  | True ? Rest :(Init)
+  * (Move_N): True ? Move(N) :(Init)
+  * (Move_W): True ? Move(W) :(Init)
+  * (Move_S): True ? Move(S) :(Init)
+  * (Move_E): True ? Move(E) :(Init)
+}
+
+Whale5(Init){
+  *(Init) :
+  | Cell(F,A) / Cell(B,A) / Cell(L,A) / Cell(R,A) ? Pop(F) :(Adversaire)
+  | Cell(F,T) / Cell(B,T) / Cell(L,T) / Cell(R,T) ? Pop(F) :(Team)
+  | True ? Rest :(Bouge)
+
+  *(Adversaire) :
+  | !Cell(F,A) / !Cell(B,A) / !Cell(L,A) / !Cell(R,A) ? Move(F) / Move(B) / Wizz / Move(L) / Move(R):(Init)
+  | True ? Rest :(Adversaire)
+
+  *(Team) :
+  | !Cell(F,T) / !Cell(B,T) / !Cell(L,T) / !Cell(R,T) ? Move(F) / Move(B) / Wizz / Move(L) / Move(R):(Init)
+  | True ? Rest :(Team)
+
+  *(Bouge) :
+  | Cell(F,V) & Cell(L,V) & Cell(R,V) & Cell(B,V) ? Rest / Turn(L) / Turn(R) / Turn(B) :(Move_F)
+  | !Cell(F,V) & Cell(L,V) & Cell(R,V) & Cell(B,V) ? Turn(L) / Turn(R) / Turn(B) :(Move_F)
+  | Cell(F,V) & !Cell(L,V) & Cell(R,V) & Cell(B,V) ? Rest / Turn(R) / Turn(B) :(Move_F)
+  | Cell(F,V) & Cell(L,V) & !Cell(R,V) & Cell(B,V) ? Rest / Turn(L) / Turn(B) :(Move_F)
+  | Cell(F,V) & Cell(L,V) & Cell(R,V) & !Cell(B,V) ? Rest / Turn(R) / Turn(L) :(Move_F)
+  | !Cell(F,V) & !Cell(L,V) & Cell(R,V) & Cell(B,V) ? Turn(R) / Turn(B) :(Move_F)
+  | !Cell(F,V) & Cell(L,V) & !Cell(R,V) & Cell(B,V) ? Turn(L) / Turn(B) :(Move_F)
+  | !Cell(F,V) & Cell(L,V) & Cell(R,V) & !Cell(B,V) ? Turn(R) / Turn(L) :(Move_F)
+  | Cell(F,V) & !Cell(L,V) & !Cell(R,V) & Cell(B,V) ? Rest / Turn(B) :(Move_F)
+  | Cell(F,V) & !Cell(L,V) & Cell(R,V) & !Cell(B,V) ? Rest / Turn(R) :(Move_F)
+  | Cell(F,V) & Cell(L,V) & !Cell(R,V) & !Cell(B,V) ? Rest / Turn(L) :(Move_F)
+  | !Cell(F,V) & !Cell(L,V) & !Cell(R,V) & Cell(B,V) ? Turn(B) :(Move_F)
+  | Cell(F,V) & !Cell(L,V) & !Cell(R,V) & !Cell(B,V) ? Rest :(Move_F)
+  | !Cell(F,V) & Cell(L,V) & !Cell(R,V) & !Cell(B,V) ? Turn(L) :(Move_F)
+  | !Cell(F,V) & !Cell(L,V) & Cell(R,V) & !Cell(B,V) ? Turn(R) :(Move_F)
+  | True ? Rest :(Init)
+
+  *(Move_F) : True ? Move(F) :(Init)
+}
+
+Whaler5(Init){
+  *(Init) :
+  | Cell(F,A) / Cell(B,A) / Cell(L,A) / Cell(R,A) ? Rest :(Whale_Detected)
+  | !Got(Power) ? Pop :(Fuite)
+  | True ? Rest :(Chase)
+
+  *(Whale_Detected) :
+  | Cell(F,A) ? Hit(F) :(Init)
+  | Cell(L,A) ? Turn(L) :(Hit_Whale)
+  | Cell(R,A) ? Turn(R) :(Hit_Whale)
+  | Cell(B,A) ? Turn(B) :(Hit_Whale)
+
+  *(Fuite) :
+  | Closest(D, F) ? Turn(B) :(Verif)
+  | Closest(D, B) ? Move(F) :(Verif)
+  | Closest(D, L) ? Turn(R) :(Verif)
+  | Closest(D, R) ? Turn(L) :(Verif)
+
+  *(Chase) :
+  | Closest(A, F) ? Pop :(Verif)
+  | Closest(A, B) ? Turn(B) :(Verif)
+  | Closest(A, R) ? Turn(R) :(Verif)
+  | Closest(A, L) ? Turn(L) :(Verif)
+  | True ? Rest :(Bouge)
+
+  *(Verif) :
+  | Cell(F,V) ? Move(F) :(Init)
+  | True ? Turn(L) / Turn(R) :(Move_F)
+
+  *(Move_F) : True ? Move(F) :(Init)
+
+  *(Hit_Whale) : True ? Hit(F) :(Init)
+
+  *(Bouge) :
+  | Cell(F,V) & Cell(L,V) & Cell(R,V) & Cell(B,V) ? Rest / Turn(L) / Turn(R) / Turn(B) :(Move_F)
+  | !Cell(F,V) & Cell(L,V) & Cell(R,V) & Cell(B,V) ? Turn(L) / Turn(R) / Turn(B) :(Move_F)
+  | Cell(F,V) & !Cell(L,V) & Cell(R,V) & Cell(B,V) ? Rest / Turn(R) / Turn(B) :(Move_F)
+  | Cell(F,V) & Cell(L,V) & !Cell(R,V) & Cell(B,V) ? Rest / Turn(L) / Turn(B) :(Move_F)
+  | Cell(F,V) & Cell(L,V) & Cell(R,V) & !Cell(B,V) ? Rest / Turn(R) / Turn(L) :(Move_F)
+  | !Cell(F,V) & !Cell(L,V) & Cell(R,V) & Cell(B,V) ? Turn(R) / Turn(B) :(Move_F)
+  | !Cell(F,V) & Cell(L,V) & !Cell(R,V) & Cell(B,V) ? Turn(L) / Turn(B) :(Move_F)
+  | !Cell(F,V) & Cell(L,V) & Cell(R,V) & !Cell(B,V) ? Turn(R) / Turn(L) :(Move_F)
+  | Cell(F,V) & !Cell(L,V) & !Cell(R,V) & Cell(B,V) ? Rest / Turn(B) :(Move_F)
+  | Cell(F,V) & !Cell(L,V) & Cell(R,V) & !Cell(B,V) ? Rest / Turn(R) :(Move_F)
+  | Cell(F,V) & Cell(L,V) & !Cell(R,V) & !Cell(B,V) ? Rest / Turn(L) :(Move_F)
+  | !Cell(F,V) & !Cell(L,V) & !Cell(R,V) & Cell(B,V) ? Turn(B) :(Move_F)
+  | Cell(F,V) & !Cell(L,V) & !Cell(R,V) & !Cell(B,V) ? Rest :(Move_F)
+  | !Cell(F,V) & Cell(L,V) & !Cell(R,V) & !Cell(B,V) ? Turn(L) :(Move_F)
+  | !Cell(F,V) & !Cell(L,V) & Cell(R,V) & !Cell(B,V) ? Turn(R) :(Move_F)
+  | True ? Rest :(Init)
+}

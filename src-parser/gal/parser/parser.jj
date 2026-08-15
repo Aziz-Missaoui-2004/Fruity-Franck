@@ -1,0 +1,662 @@
+/* Michael PÉRIN, Verimag / Univ. Grenoble Alpes, may 2018
+ *
+ * A JavaCC parser for automata
+ *
+ * The parser produces an ast in the dot format for Graphviz
+ *
+ * Use the Graphviz viewer available at (https://graphviz.gitlab.io)
+ * to get a graphical view of the resulting ast
+ */
+
+options
+{
+  //other options
+  DEBUG_PARSER = false;
+  DEBUG_LOOKAHEAD = false;
+  DEBUG_TOKEN_MANAGER = false;
+  STATIC = false;
+}
+
+PARSER_BEGIN(Parser)
+
+package gal.parser;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+
+import gal.ast.* ;
+import gal.ast.export.*;
+import gal.util.*;
+
+public class Parser {
+
+  public static AST from_file(String path_file) throws Exception
+  {
+    AST ast = new Parser(new BufferedReader(new FileReader(path_file))).parse();
+    return ast;
+  }
+
+  public static boolean option(String option, String [] args)
+  {
+    int i = 0 ;
+    while (i < args.length){
+      if (args[i].equals(option)){ return true; }
+      i++;
+    }
+    return false;
+  }
+  
+  public static int index_of_option(String option, String[] args) 
+  {
+    int i = 0 ;
+    while (i < args.length) {
+      if (args[i].equals(option)){ return i; }
+      i++;
+    }
+    return -1;
+  }
+  
+  public static void main(String[] args) throws Exception 
+  {
+    AST ast;
+    int i = index_of_option("-file", args) ;
+    ast = from_file(args[i+1]) ;
+
+  
+    if ( option("-ast", args) ) {
+      AstPrinter printer = new AstPrinter();
+      ast.accept(printer);
+      System.out.println("\n// Exporting the AST of the parsed automata in .dot");
+      System.out.println(printer.to_dot());
+    }
+        
+    if ( option("-aut", args) ) {         
+      System.out.println("// Exporting the CFG of the parsed automata in .dot"); 
+			new AutPrinter(System.out, ast);
+    }
+  
+    if ( option("-txt", args) ) {
+      Ast2Gal printer = new Ast2Gal();
+      ast.accept(printer);
+      System.out.println("\n// Exporting the reformatted SRC of the parsed automata in .txt");
+      System.out.println(printer.export());
+    }
+
+	}
+}
+PARSER_END(Parser)
+
+
+// == THE LEXER ==
+
+SKIP: {
+    < SINGLE_LINE_COMMENT : "//" (~["\n", "\r"])* >
+}
+
+SKIP:  { " " | "\t" | "\n" | "\r" }
+
+
+   
+TOKEN: { 
+  <KEY: "Key"> 
+| < CONDITION: 
+    "True" 
+  | "MyDir" 
+  | "Cell" | "Step" // 2 names for the same condition
+  | "Closest" 
+  | "Got"
+  | "Pushed" 
+  | "Struck" 
+  > 
+}
+
+TOKEN: { 
+  < ACTION: 
+    "Add"
+  | "Egg" 
+  | "Explode" 
+  | "Get"  
+  | "Hit" 
+  | "Jump" 
+  | "Move" 
+  | "Pick" 
+  | "Protect"
+  | "Push"
+  | "Rest" 
+  | "Store" 
+  | "Throw" 
+  | "Turn" 
+  | "Wait"
+  // action with no semantics 
+  | "Pop"
+  | "Wizz" 
+  > 
+}
+
+TOKEN : { 
+  < SPECIAL_KEY: 
+    "SPACE" 
+  | "ENTER" 
+  | "FU" 
+  | "FD" 
+  | "FL" 
+  | "FR" 
+  > 
+}
+
+TOKEN: { 
+  < DIRVAR: "d" > // a variable of type direction
+| < CATVAR: "c" > // a variable of type category
+| < ENTVAR: "e" >
+| < DOLLAR: "$" > // a variable of type entity
+}
+
+TOKEN: { 
+  < DIRECTION: 
+    "Here"  | "H" 
+  | "North" | "N" 
+  | "South" | "S" 
+  | "East"  | "E" 
+  | "West"  | "W" 
+  | "NE" | "SE" | "SW" | "NW" 
+  | "Forward"  | "Front" | "F" 
+  | "BackWard" | "Back"  | "B" 
+  | "Left"     | "L" 
+  | "Right"    | "R"  
+  > 
+}
+
+// UNARY OPERATOR
+
+TOKEN: {
+  <OPPOSITE: "opposite" >
+}
+
+TOKEN: { 
+  < CATEGORY: 
+    "Adversary" | "A"   
+  | "Clue"      | "C" 
+  | "Danger"    | "D"  
+  | "Gate"      | "G"  
+  | "Icon"      | "I" 
+  | "Jumpable"  | "J"  
+  | "Killable"  | "K"   
+  | "Moveable"  | "M" 
+  | "Obstacle"  | "O"  
+  | "Pickable"  | "P" 
+  | "Team"      | "T"
+  | "Util"      | "U" 
+  | "Void"      | "V" 
+  | "PlayerT"   | "@" 
+  | "PlayerA"   | "#"
+  | "Power"     
+  | "Stuff"    
+  // categories with no semantics
+  | "Qube"      | "Q" 
+  | "Xics"      | "X" 
+  | "Ygre"      | "Y" 
+  | "Zedd"      | "Z"
+  > 
+}
+
+TOKEN: { 
+  <MOUSE : 
+    "RightButtonPressed"  | "RBP"
+  | "RightButtonReleaded" | "RBR"
+  | "MidButtonPressed"    | "MBP"
+  | "MidButtonReleased"   | "MBR" 
+  | "LeftButtonPressed"   | "LBP"
+  | "LeftButtonReleased"  | "LBR"
+  | "WheelUp"             | "WLU"
+  | "WheelDown"           | "WLD"         
+  >
+}
+
+TOKEN: { <UNDERSCORE: "_"> }
+
+TOKEN: { < #CAPITAL: ["A"-"Z"] > }
+
+TOKEN: { < LOWERCASE: ["a"-"z"] > }
+
+TOKEN: { < #LETTER: (<CAPITAL> | <LOWERCASE>) >  }
+
+TOKEN: { < #DIGIT: ["0"-"9"] > } 
+
+TOKEN:
+{ < UNARY: "!" > }
+
+TOKEN:
+{ < CONJUNCTION: "&" > 
+| < DISJUNCTION: "/" >
+| < SEQUENCE:    ";" >
+}
+
+
+TOKEN:
+{ < ID: <CAPITAL> (<LETTER>|<DIGIT>|<UNDERSCORE>)* > }
+
+TOKEN:
+{ < INTEGER: ("-")? (<DIGIT>)+ > }
+   
+
+
+// == THE PARSER ==
+
+
+AST parse():
+{ LinkedList<Automaton> automata = new LinkedList<Automaton>();  
+  Automaton aut;
+} 
+{  
+  ( 
+    aut = pAutomaton() { automata.add(aut); } 
+  )* 
+  <EOF>
+    { return new AST(automata); } 
+}
+
+
+// STATE 
+
+State pState():
+{ String name ; }
+{
+  "("
+  name = pStateID()
+  ")" 
+  	{ return new State(name); }
+}
+
+
+String pStateID():
+{ String name ; }
+{
+  name = pIdentifier()  
+    { return name; }
+
+| "_"   	
+    { return "_"; }
+
+| // epsilon
+   	{ return ""; } 
+}
+
+
+// AUTOMATON
+
+Automaton pAutomaton():
+{ String name ; 
+  String entry_state ; 
+  LinkedList<Mode> modes = new LinkedList<Mode>();
+  Mode mode; 
+}
+{
+  name = pIdentifier()
+  "("
+  entry_state = pIdentifier()
+  ")"
+  "{"
+  (
+    mode = pMode() { modes.add(mode); } 
+  )+
+  "}"
+  	{ return new Automaton(name, new State(entry_state), modes) ; }
+}
+
+
+// MODE, BEHAVIOUR, TRANSITION 
+
+Mode pMode():
+{ State state;
+  Mode mode;
+  Behaviour behaviour;
+}
+{
+  "*"
+  state = pState()
+  (":")? 
+  behaviour = pBehaviour() 
+  	{ return new Mode(state, behaviour) ; }
+}
+
+
+Behaviour pBehaviour():
+{ LinkedList<Transition> transitions = new LinkedList<Transition>(); 
+  Transition t;
+}
+{
+  ( 
+    t = pTransition() { transitions.add(t) ; }
+  )*
+  	{ return new Behaviour(transitions); }
+}
+
+
+Transition pTransition():
+{ Condition condition ; 
+  Actions actions = new Actions(); 
+  State state ; 
+}
+{
+  ("|")?
+  condition = pCondition() 
+  "?"
+  ( pActions(actions) )?
+  ":"
+  state = pState()
+  	{ return new Transition(condition, actions, state) ; }
+}  
+
+
+// ACTIONS 
+
+void pActions(Actions actions) :
+{ 
+  FunCall action; 
+  String op = null;
+}
+{ action = pProbabilisticAction() { actions.add(action); } 
+  ( 
+    op = pActionOperator()          { actions.set(op); }
+    action = pProbabilisticAction() { actions.add(action); } 
+  )* 
+}
+
+
+String pActionOperator() :
+{ Token token; }
+{ 
+  ( token = <DISJUNCTION> 
+  | token = <SEQUENCE>
+  )
+    { return token.image; }
+}
+
+
+FunCall pProbabilisticAction():
+{ int percent; 
+  Token action ; 
+  LinkedList<Parameter> parameters = new LinkedList<Parameter >(); 
+}
+{
+  percent = pPercent()
+  action = <ACTION>
+  parameters = pOptionalParameters()
+  	{ return new FunCall(percent, action.image, parameters) ; }
+
+| action = <ACTION>
+  parameters = pOptionalParameters()
+  	{ return new FunCall(action.image, parameters) ; }	
+}
+
+
+int pPercent():
+{ Token token ; }
+{
+  token = <INTEGER> 
+  "%"
+  	{ return Integer.parseInt(token.image); }
+}
+
+
+// CONDITION
+
+Condition pCondition():
+{ Expression expr ; }
+{ 
+  expr = pExpression()
+	  { return new Condition(expr) ; }
+}
+
+  
+Expression pExpression():
+{ Expression e, expr ; 
+  Token token ; 
+  FunCall pred ; 
+}
+{ 
+  "("
+  e = pExpression()
+  ")"
+  expr = pBinop_Expression(e)
+  	{ return expr ; } 	
+
+| token = <UNARY>
+  expr  = pExpression()
+	  { return new UnaryOp(token.image, expr) ; }
+	
+| pred = pPredicate()
+  expr = pBinop_Expression(pred)
+  	{ return expr ; }
+}
+
+
+Expression pBinop_Expression(Expression e1):
+{ Token token ; 
+  Expression e2 ; 
+}
+{
+  ( token = <CONJUNCTION> 
+  | token = <DISJUNCTION>
+  )
+  e2 = pExpression()
+ 	{ return new BinaryOp(token.image,e1,e2) ; }
+
+| // epsilon
+  	{ return e1 ; }
+}
+
+
+FunCall pPredicate():
+{ Token token ; 
+  LinkedList<Parameter> parameters = new LinkedList<Parameter>() ; 
+  Key key ; 
+}
+{
+  token = <KEY>
+  "("
+  key = pKeyName()	
+  ")"
+   	{ parameters.add(key) ; 
+      return new FunCall(token.image, parameters) ; 
+    }
+   	
+| token = <CONDITION>
+  parameters = pOptionalParameters()
+  	{ return new FunCall(token.image, parameters) ; }	
+}
+
+
+// ARGUMENTS
+
+LinkedList<Parameter> pOptionalParameters() :
+{ LinkedList<Parameter> parameters = new LinkedList<Parameter>(); }
+{
+  "(" 
+  ( pParameters(parameters) )?
+  ")"
+    { return parameters; }
+
+| // epsilon 
+    { return parameters; }  
+}
+
+
+void pParameters(LinkedList<Parameter> parameters) :  
+{ Parameter p; }
+{ 
+  p = pParameter() { parameters.add(p); }
+  ( 
+    ","
+    p = pParameter() { parameters.add(p); }
+  )*
+}
+
+
+Parameter pParameter():
+{ Token token ; 
+  Parameter argument ; 
+}
+{
+  argument = pDirection()
+	  { return argument ; }
+ 
+| argument = pCategory()
+	  { return argument ; }
+
+| argument = pIntegerValue()
+    { return argument ; }
+
+| token = <UNDERSCORE>
+	{ return new Variable(); }
+
+| argument = pArgumentVar()
+	{ return argument ; }
+	   
+}
+
+// INTEGER + unity
+
+Parameter pIntegerValue():
+{ Token token ; }
+{
+  token = <INTEGER>
+  ( "°"
+    { return new IntDegree(Integer.parseInt(token.image)); }
+  | "%"
+    { return new IntPercent(Integer.parseInt(token.image)); }
+  | //epsilon
+    { return new IntValue(Integer.parseInt(token.image)); }
+  )
+}
+
+
+// DIRECTION 	
+
+Direction pDirection():
+{ Token token;
+  Direction d;
+}
+{
+  ( token = <DIRECTION>
+ // | token = <DIRVAR>    
+  )
+    { return new Direction(new Terminal(token.image)); }
+}
+
+
+// CATEGORY 
+
+Category pCategory(): 
+{ Token token; }
+{
+  ( token = <CATEGORY>
+  //| token = <CATVAR>
+  )
+    { return new Category(new Terminal(token.image)); }
+}
+
+
+// KEY NAME 
+
+Key pKeyName():
+{ Token token ; }
+{
+  ( token = <INTEGER>
+  | token = pLowercase()
+  | token = <SPECIAL_KEY> 
+  | token = <MOUSE>
+  | token = <UNDERSCORE> 
+  ) 
+    { return new Key(new Terminal(token.image)) ; }	
+}
+
+// SIMPLE EXPRESSION
+
+Variable pArgumentVar():
+{ Variable var; }
+{
+  <OPPOSITE>
+  "("
+  var = pArgumentVar()
+  ")"
+  { var.opposite(); return var; }
+|
+  var = pVariable()
+  { return var; }	      
+}
+
+
+// VARIABLE
+
+Variable pVariable():
+{ int i = 1;
+  Variable var = new Variable();
+}
+{
+  < DIRVAR >
+    { var.direction(); return var; }   
+
+| < CATVAR >
+    { var.category(); return var; }     
+
+| < ENTVAR >
+    { return new Variable(i); }     
+
+| < DOLLAR >
+  ( i = pInteger() )?
+  { var = new Variable(i); }
+  ( "." 
+ 	 (       < DIRVAR > { var.direction(); }
+     |
+       < CATVAR > { var.category(); }
+     )
+  )?
+  { return var; }
+	 
+}
+
+// LOWERCASE  
+
+Token pLowercase():
+{ Token token; }
+{ 
+  ( token = <LOWERCASE>
+  | token = <DIRVAR>
+  | token = <CATVAR>
+  | token = <ENTVAR>
+  )
+  { return token; }
+}
+
+
+// IDENTIFIER
+	  
+String pIdentifier():
+{ Token token; }
+{
+  ( token = <ID> 
+  | token = <ACTION>
+  | token = <CONDITION>
+  | token = <KEY>
+  | token = <CATEGORY> 
+  | token = <DIRECTION>
+  )
+  { return token.image; }
+}
+
+// INTEGER
+
+int pInteger():
+{ Token token; }
+{
+  token = < INTEGER >
+	{ return Integer.parseInt(token.image); }
+}
+  
+  
+

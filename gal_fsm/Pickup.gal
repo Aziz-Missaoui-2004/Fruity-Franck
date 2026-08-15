@@ -1,0 +1,7 @@
+Pickup(Idle){
+  * (Idle):
+  | Got(@) ? Pick :()	// Frank overlaps : award the value, then () destroys this pickup
+  | True   ?      :(Idle)
+  
+  *()
+}

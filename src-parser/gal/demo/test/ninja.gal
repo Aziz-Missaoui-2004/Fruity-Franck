@@ -1,0 +1,17 @@
+Ninja(Zanshin){
+  * (Zanshin): 
+  | Got(Power,0) ?             :()
+  | Cell(d,A) ? Jump ; Hit(d)  :(Zanshin)
+  | Cell(d,V) ? Store          :(Zen)
+
+  * (Zen):
+  | Got(Power,0) ?                        :()
+  | Cell(d,A) ? Add(Power,-1) ; Get       :(Zanshin)
+  | Cell(d,c) ? Get                       :(Zanshin)
+  | True      ? Rest ; Add(Power,1)       :(Zen)
+  | Cell(d,A,2,87,123) ? Hit(d,2,87,123)  :(Unreachable)
+
+  * ()   
+
+  * (Unreachable)
+}
