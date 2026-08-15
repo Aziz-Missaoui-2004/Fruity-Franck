@@ -17,7 +17,7 @@ public abstract class Game {
 	/**
 	 * World gravity (cm/tick² conceptually; games that model "no acceleration"
 	 * Boulder-Dash-style falling simply read it as an on/off + speed cue). 0 = no
-	 * gravity (the default for top-down maze games like Pac-Man). Set via
+	 * gravity by default. Set via
 	 * {@link #setGravity(double)} so existing constructors stay unchanged.
 	 */
 	private double gravity = 0.0;
