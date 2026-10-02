@@ -3,6 +3,7 @@
 University software-engineering project developed in Java as part of PLE2026 by a five-person team.
 
 ### the final & discussed game engine is developed by : ROUATBI Ghassen
+#### Team members :  Ghassen | Aziz | Morel | Djibrila | Aya 
 
 The project combines a reusable game engine, the **Fruity Frank** game, and a parser for **GAL**, a small language used to describe finite-state-machine behaviors for game entities.
 
