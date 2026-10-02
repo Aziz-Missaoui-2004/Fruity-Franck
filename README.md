@@ -26,25 +26,7 @@ The main goal was not simply to build a playable game. The project required us t
 
 The codebase is split into three main parts:
 
-```text
-                         ┌─────────────────────────┐
-                         │     Fruity Frank        │
-                         │ Rules · Map · Entities  │
-                         │ Controls · Game Logic   │
-                         └───────────┬─────────────┘
-                                     │ uses
-                         ┌───────────▼─────────────┐
-                         │   Generic Java Engine   │
-                         │ Model · View · Physics  │
-                         │ Ticker · Brain · Stunt  │
-                         └───────────┬─────────────┘
-                                     │ behavior
-                         ┌───────────▼─────────────┐
-                         │      GAL / FSM          │
-                         │ JavaCC Parser · AST     │
-                         │ External Bot Behaviors  │
-                         └─────────────────────────┘
-```
+![Architecture](<ajoute ici.png>)
 
 ### Engine responsibilities
 
