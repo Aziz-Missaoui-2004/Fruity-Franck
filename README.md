@@ -26,7 +26,7 @@ The main goal was not simply to build a playable game. The project required us t
 
 The codebase is split into three main parts:
 
-![Architecture](<ajoute ici.png>)
+![schema](<schema-fruity-franck.png>)
 
 ### Engine responsibilities
 
