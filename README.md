@@ -2,31 +2,31 @@
 
 University software-engineering project developed in Java as part of PLE2026 by a five-person team.
 
-### the final & discussed game engine is developed by : ROUATBI Ghassen
-#### Team members :  Ghassen | Aziz | Morel | Djibrila | Aya 
+**Team:** Ghassen Rouatbi · Aziz Missaoui · Morel · Djibrila · Aya  
+**Final game-engine implementation presented during the project:** Ghassen Rouatbi
 
 The project combines a reusable game engine, the **Fruity Frank** game, and a parser for **GAL**, a small language used to describe finite-state-machine behaviors for game entities.
 
 ## Why this project matters
 
-The main goal was not simply to build a playable game. The project required us to separate generic engine responsibilities from game-specific rules, model real-time entity behavior, manage collisions and physics-like interactions, and make bot behavior configurable through finite-state machines.
+The main goal was not simply to build a playable game. The project required the team to separate generic engine responsibilities from game-specific rules, model real-time entity behavior, manage collisions and physics-like interactions, and make bot behavior configurable through finite-state machines.
 
 ## Engineering highlights
 
-- Built a reusable Java game-engine layer separated from Fruity Frank business/game rules.
-- Implemented entity simulation, collisions, movement, rendering and camera management.
+- Contributed to a reusable Java game-engine architecture separated from Fruity Frank-specific rules.
+- Worked with entity simulation, collisions, movement, rendering and camera management.
 - Modeled bot behavior with Java finite-state machines and external GAL automata.
 - Integrated a JavaCC-based parser and AST for GAL behavior files.
 - Supported configurable levels and entity behavior without rewriting the core engine.
-- Implemented gameplay interactions such as destructible terrain, collectible fruits, falling/pushable apples, projectiles and enemy collisions.
-- Added debugging and performance instrumentation for tick time, paint time, FPS, bounding boxes and entity actions.
+- Implemented and tested gameplay interactions such as destructible terrain, collectible fruits, falling/pushable apples, projectiles and enemy collisions.
+- Used debugging and performance instrumentation for tick time, paint time, FPS, bounding boxes and entity actions.
 - Worked in a multi-developer Git workflow on a shared codebase.
 
 ## Architecture
 
 The codebase is split into three main parts:
 
-![schema](<schema-fruity-franck.png>)
+![Fruity Frank architecture](schema-fruity-franck.png)
 
 ### Engine responsibilities
 
